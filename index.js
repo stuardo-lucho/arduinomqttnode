@@ -2,6 +2,9 @@
 const app = require('express')();
 const httpServer = require('http').createServer(app);
 const io = require('socket.io')(httpServer);
+const arduinoDao = require("./ArduinoDao");
+
+arduinoDao.connectMysql();
 
 //web Server
 app.get('/', function (req, res) {
@@ -16,7 +19,13 @@ httpServer.listen(3100, function () {
 io.on('connection',  (socket) => {
     console.log("Usuario Conectado");
 
+    arduinoDao.consultarEstadoActual("arduino_1",function (data){
+        io.emit('nuevoEstadoLed', data.led);
+        io.emit('ultrasonido', data.ultrasonido);
+    });
+
     socket.on("estadoLed", function (estado) {
+        arduinoDao.actualizarEstadoLed(estado,"arduino_1");
         io.emit('nuevoEstadoLed', estado);
         client.publish('estadoled', estado);
     });
@@ -46,8 +55,11 @@ client.on('error', function (error) {
 
 client.on('message', function (topic, message) {
     console.log('Received message:', topic, message.toString());
+
     if(topic == 'ultrasonido'){
-        io.sockets.emit('ultrasonido', message.toString());
+        let distanciaUltrasonido = message.toString();
+        arduinoDao.actualizarValorUltrasonido(distanciaUltrasonido,"arduino_1");
+        io.sockets.emit('ultrasonido', distanciaUltrasonido);
     }
 });
 
