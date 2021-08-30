@@ -35,12 +35,12 @@ io.on('connection',  (socket) => {
 //mqtt client
 const mqtt = require('mqtt');
 
+//servicio libre por 6 horas: host: 'walnutwizard685.cloud.shiftr.io'
 const options = {
-    host: 'walnutwizard685.cloud.shiftr.io',
+    host: 'ec2-54-165-197-111.compute-1.amazonaws.com',
     port: 1883,
     username: 'walnutwizard685',
-    password: 'BFtQqKhs4CIftf3F',
-    clientId: 'nodejs'
+    password: 'BFtQqKhs4CIftf3F'
 }
 
 let client = mqtt.connect(options);
