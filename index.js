@@ -35,7 +35,6 @@ io.on('connection',  (socket) => {
 //mqtt client
 const mqtt = require('mqtt');
 
-//servicio libre por 6 horas: host: 'walnutwizard685.cloud.shiftr.io'
 const options = {
     host: 'ec2-54-165-197-111.compute-1.amazonaws.com',
     port: 1883,

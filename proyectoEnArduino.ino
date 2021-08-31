@@ -28,13 +28,13 @@ void connect() {
 
   Serial.println("\nconnected!");
 
-  client.subscribe("/estadoled");
+  client.subscribe("estadoled");
   // client.unsubscribe("/hello");
 }
 
 void messageReceived(String &topic, String &payload) {
   Serial.println("incoming: " + topic + " - " + payload);
-  if(topic == "/estadoled"){
+  if(topic == "estadoled"){
     if (payload == "on"){
        digitalWrite (6, HIGH);
     }else{
@@ -56,7 +56,8 @@ void setup() {
 
   pinMode(6, OUTPUT); //pin del led
 
-  client.begin("walnutwizard685.cloud.shiftr.io", 1883,ethernetClient);
+  //client.begin("walnutwizard685.cloud.shiftr.io", 1883,ethernetClient);
+  client.begin("ec2-54-165-197-111.compute-1.amazonaws.com", 1883,ethernetClient);
   client.onMessage(messageReceived);
 
   connect();
@@ -84,53 +85,13 @@ void loop() {
     Serial.print(distancia);
     Serial.println(" cm");
     distanciaPrevia = distancia;
-    client.publish("/ultrasonido", String(distancia));
+    client.publish("ultrasonido", String(distancia));
   }
 
   delay(100);
 
 
 }
-/*
-void httpRequest() {
-
-  Serial.println("making GET request");
-
-  long distancia = sonar.ping_cm();
-  String url = "/arduino?ultra=";
-    url = url + distancia;
-  httpClient.get(url);
-
-  // read the status code and body of the response
-  int statusCode = httpClient.responseStatusCode();
-  if(statusCode == 200){
-    String response = httpClient.responseBody();
-
-    StaticJsonDocument<32> doc;
-    DeserializationError error = deserializeJson(doc, response);
-
-    if (error) {
-      Serial.print(F("deserializeJson() failed: "));
-      Serial.println(error.f_str());
-      return;
-    }
-
-      String estado = doc["estadoLed"];
-      Serial.print("Response: ");
-      Serial.println(response);
-      Serial.print("estado del Led: ");
-      Serial.println(estado);
-
-      if(estado == "on"){
-        digitalWrite (6, HIGH);
-      }else{
-        digitalWrite (6, LOW);
-      }
-
-  }
-
-
-}*/
 
 void inicializar_ethernetShield(){
   Serial.println("Iniciando DHCP client:");
